@@ -1,20 +1,26 @@
 <h2>Inserção de Livros</h2>
 <mat-card>
-    <mat-form-field>
-        <input type="number" matInput placeholder="Id" [(ngModel)]="id">
+    <!-- o TwoWayDataBind serve para passar campos unicos, forms facilitam multiplos campos -->
+    <form (submit)="onAddLivro(livroForm)" #livroForm="ngForm">
+        <mat-form-field>
+            <input type="number" matInput placeholder="Id" name="id" ngModel required>
+            <mat-error>Digite um id valido</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+            <input type="text" matInput placeholder="Titulo" name="titulo" ngModel required minlength="4">
+            <mat-error>Digite um titulo valido</mat-error>
 
-    </mat-form-field>
-    <mat-form-field>
-        <input type="text" matInput placeholder="Titulo" [(ngModel)]="titulo">
+        </mat-form-field>
+        <mat-form-field>
+            <input type="text" matInput placeholder="Autor" name="autor" ngModel required minlength="4">
+            <mat-error>Digite um autor valido</mat-error>
 
-    </mat-form-field>
-    <mat-form-field>
-        <input type="text" matInput placeholder="Autor" [(ngModel)]="autor">
+        </mat-form-field>
+        <mat-form-field>
+            <input type="number" matInput placeholder="Paginas" name="paginas" ngModelr equired>
+            <mat-error>Digite um numero de paginas valido</mat-error>
 
-    </mat-form-field>
-    <mat-form-field>
-        <input type="number" matInput placeholder="Paginas" [(ngModel)]="paginas">
-
-    </mat-form-field>
-    <button color="primary" mat-raised-button (click)="onAddLivro($event)">Inserir livro</button>
+        </mat-form-field>
+        <button color="primary" mat-raised-button>Inserir livro</button>
+    </form>
 </mat-card>

@@ -28,6 +28,7 @@ import { LivrosListaComponent } from './livros/livros-lista/livros-lista.compone
     MatExpansionModule
   ],
   providers: [],
+  //  providers: [LivroService], -> substitui @Injectable(...)
   bootstrap: [AppComponent]
 })
 export class AppModule { }

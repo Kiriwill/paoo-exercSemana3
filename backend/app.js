@@ -1,8 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const env = require('./env');
 
 const app = express();
 app.use(bodyParser.json());
+const Livro = require('./models/livro');
+
+const dbName = "db_livros"
+mongoose.connect(`mongodb+srv://fatec_ipi_2021_paoo_clientes:${env.mongoPassword}@cluster0.naukr.mongodb.net/${dbName}?retryWrites=true&w=majority`, { useNewUrlParser: true })
+    .then(() => console.log('Conexão deu certo.'))
+    .catch(() => console.log('Conexão NÃO FOI BEM.'))
 
 const livros = [{
         id: '1',
@@ -27,15 +35,23 @@ app.use((req, res, next) => {
 });
 
 app.post('/api/livros', (req, res, next) => {
-    const cliente = req.body;
-    console.log(cliente);
-    res.status(201).json({ mensagem: 'Livro inserido' });
+    const livro = new Livro({
+        titulo: req.body.titulo,
+        autor: req.body.autor,
+        paginas: req.body.paginas
+    })
+    livro.save();
+    console.log(livro);
+    res.status(201).json({ mensagem: 'Livro inserido' })
 });
 
-app.use('/api/livros', (req, res, next) => {
-    res.status(200).json({
-        mensagem: "Tudo OK",
-        livros: livros
-    });
+
+app.get('/api/livros', (req, res, next) => {
+    Livro.find().then(documents => {
+        res.status(200).json({
+            mensagem: "Tudo OK",
+            livros: documents
+        });
+    })
 });
 module.exports = app;

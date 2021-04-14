@@ -15,6 +15,7 @@ export class LivrosComponent {
 
   onAddLivro(form: NgForm){
     console.log(form)
+
     if (form.invalid) return;
     this.livroService.adicionarLivro(
       form.value.id,

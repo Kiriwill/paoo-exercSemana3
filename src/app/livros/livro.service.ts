@@ -25,10 +25,9 @@ export class LivroService {
         return [...this.livros];
     }
 
-    adicionarLivro(id: Int32Array, titulo: string, autor: string, paginas: Int32Array){
+    adicionarLivro(id: Int32Array, titulo: string, autor: string, paginas: Number){
         console.log('ADIONADO VIA POST')
         const livro: Livro = {
-            id: id,
             titulo: titulo,
             autor: autor,
             paginas: paginas
@@ -36,7 +35,7 @@ export class LivroService {
         this.httpClient.post<{mensagem: string}>('http://localhost:3000/api/livros',
             livro).subscribe(
                 (dados) => {
-            console.log(dados.mensagem);
+            console.log('A SER ENVIADO: ', livro);
             this.livros.push(livro);
             this.listaLivroAtualizada.next([...this.livros]);
         })

@@ -2,7 +2,8 @@ import { Injectable } from "@angular/core";
 import { Subject } from "rxjs";
 import { Livro } from "./livro.model";
 import { HttpClient } from '@angular/common/http';
-
+import { _DisposeViewRepeaterStrategy } from "@angular/cdk/collections";
+import { map } from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 export class LivroService {
@@ -13,11 +14,20 @@ export class LivroService {
     }
 
     getLivros(): Livro[]{
-
-        this.httpClient.get <{mensagem: string, livros:
-            Livro[]}>('http://localhost:3000/api/livros').subscribe(
-                (dados) => {
-                    this.livros = dados.livros;
+        this.httpClient.get <{mensagem: string, livros:any}>('http://localhost:3000/api/livros')
+            .pipe(map((dados) => {
+                return dados.livros.map(livro => {
+                    return {
+                        id: livro._id,
+                        titulo: livro.titulo,
+                        autor: livro.autor,
+                        paginas: livro.paginas
+                    }
+                })
+            }))
+            .subscribe(
+                (livros) => {
+                    this.livros = livros
                     this.listaLivroAtualizada.next([...this.livros])
                 }
             )
@@ -28,20 +38,31 @@ export class LivroService {
     adicionarLivro(id: Int32Array, titulo: string, autor: string, paginas: Number){
         console.log('ADIONADO VIA POST')
         const livro: Livro = {
+            id: null,
             titulo: titulo,
             autor: autor,
             paginas: paginas
         }
-        this.httpClient.post<{mensagem: string}>('http://localhost:3000/api/livros',
+        this.httpClient.post<{mensagem: string, id:string }>('http://localhost:3000/api/livros',
             livro).subscribe(
                 (dados) => {
-            console.log('A SER ENVIADO: ', livro);
-            this.livros.push(livro);
-            this.listaLivroAtualizada.next([...this.livros]);
+                livro.id = dados.id;
+                this.livros.push(livro);
+                this.listaLivroAtualizada.next([...this.livros]);
         })
     }
 
     getListaLivroAtualizadaObservable(){
         return this.listaLivroAtualizada.asObservable();
+    }
+
+    removerLivro(id: string): void{
+        this.httpClient.delete(`http://localhost:3000/api/livros/${id}`)
+        .subscribe(() => {
+            this.livros = this.livros.filter((cli) => {
+                return cli.id !== id
+            });
+            this.listaLivroAtualizada.next([...this.livros]);
+        });
     }
 }

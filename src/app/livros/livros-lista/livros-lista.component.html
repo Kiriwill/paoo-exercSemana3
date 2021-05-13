@@ -6,7 +6,7 @@
         <p>Paginas: {{livro.paginas}}</p>
         <mat-action-row>
             <button mat-button color="primary">Editar</button>
-            <button mat-button color="warning">Excluir</button>
+            <button mat-button color="warning" (click)="onDelete(livro.id)">Excluir</button>
         </mat-action-row>
     </mat-expansion-panel>
 </mat-accordion>

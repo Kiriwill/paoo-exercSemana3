@@ -12,6 +12,7 @@ import { AppComponent } from './app.component';
 import { LivrosComponent } from './livros/livros-inserir/livros.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { LivrosListaComponent } from './livros/livros-lista/livros-lista.component';
+import { ApppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { LivrosListaComponent } from './livros/livros-lista/livros-lista.compone
   ],
   imports: [
     BrowserModule,
+    ApppRoutingModule,
     FormsModule,
     BrowserAnimationsModule,
     MatInputModule,

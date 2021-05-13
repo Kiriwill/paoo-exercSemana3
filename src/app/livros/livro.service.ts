@@ -65,4 +65,23 @@ export class LivroService {
             this.listaLivroAtualizada.next([...this.livros]);
         });
     }
+
+    getCliente(idLivro: string) {
+        // return {...this.livros.find((li) => li.id === idLivro)};
+        return this.httpClient.get<{
+            _id: string, titulo: string, autor: string, paginas: number
+        }>(`http://localhost:3000/api/livros/${idLivro}`);
+    }
+
+    atualizarCliente(id: string, titulo: string, autor: string, paginas: number){
+        const livro: Livro = { id, titulo, autor, paginas};
+        this.httpClient.put(`http://localhost:3000/api/livros/${id}`, livro)
+        .subscribe(((res => {
+            const copia = [...this.livros];
+            const indice = copia.findIndex(cli => cli.id === livro.id);
+            copia[indice] = livro;
+            this.livros = copia;
+            this.listaLivroAtualizada.next([...this.livros]);
+        })));
+    }
 }

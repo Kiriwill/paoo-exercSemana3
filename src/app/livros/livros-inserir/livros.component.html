@@ -1,23 +1,28 @@
-<h2>Inserção de Livros</h2>
 <mat-card>
     <!-- o TwoWayDataBind serve para passar campos unicos, forms facilitam multiplos campos -->
-    <form (submit)="onSalvarLivro(livroForm)" #livroForm="ngForm">
+    <form [formGroup]="form" (submit)="onSalvarLivro()">
         <mat-form-field>
-            <input type="number" matInput placeholder="Id" name="id" ngModel required>
+            <input type="number" matInput placeholder="Id" name="id">
             <mat-error>Digite um id valido</mat-error>
         </mat-form-field>
         <mat-form-field>
-            <input type="text" matInput placeholder="Titulo" name="titulo" [ngModel]="livro?.titulo" required minlength="4">
+            <input type="text" matInput placeholder="Titulo" name="titulo" formControlName="titulo">
             <mat-error>Digite um titulo valido</mat-error>
-
         </mat-form-field>
+        <div>
+            <button mat-stroked-button type="button" (click)="selecionaArquivo.click()">Selecionar Imagem</button>
+            <input type="file" (change)="onImagemSelecionada($event)" #selecionaArquivo>
+            <div class="imagem-preview">
+                <img [src]="previewImagem" *ngIf="previewImagem && previewImagem !== '' && form.get('imagem').valid" [alt]="form.value.nome">
+            </div>
+        </div>
         <mat-form-field>
-            <input type="text" matInput placeholder="Autor" name="autor" [ngModel]="livro?.autor" required minlength="4">
+            <input type="text" matInput placeholder="Autor" name="autor" formControlName="autor">
             <mat-error>Digite um autor valido</mat-error>
 
         </mat-form-field>
         <mat-form-field>
-            <input type="number" matInput placeholder="Paginas" name="paginas" [ngModel]="livro?.paginas" required>
+            <input type="text" matInput placeholder="Paginas" name="paginas" formControlName="paginas">
             <mat-error>Digite um numero de paginas valido</mat-error>
 
         </mat-form-field>

@@ -21,7 +21,8 @@ export class LivroService {
                         id: livro._id,
                         titulo: livro.titulo,
                         autor: livro.autor,
-                        paginas: livro.paginas
+                        paginas: livro.paginas,
+                        imagemURL: livro.imagemURL
                     }
                 })
             }))
@@ -35,20 +36,31 @@ export class LivroService {
         return [...this.livros];
     }
 
-    adicionarLivro(id: Int32Array, titulo: string, autor: string, paginas: Number){
+    adicionarLivro(id: Int32Array, titulo: string, autor: string, paginas: string, imagem: File){
         console.log('ADIONADO VIA POST')
-        const livro: Livro = {
-            id: null,
-            titulo: titulo,
-            autor: autor,
-            paginas: paginas
-        }
-        this.httpClient.post<{mensagem: string, id:string }>('http://localhost:3000/api/livros',
-            livro).subscribe(
+        // const livro: Livro = {
+        //     id: null,
+        //     titulo: titulo,
+        //     autor: autor,
+        //     paginas: paginas
+        // }
+        const dadosLivro = new FormData();
+        dadosLivro.append("titulo", titulo);
+        dadosLivro.append("autor", autor);
+        dadosLivro.append("paginas", paginas);
+        dadosLivro.append("imagem", imagem);
+
+        this.httpClient.post<{mensagem: string, livro:Livro }>
+        ('http://localhost:3000/api/livros', dadosLivro).subscribe(
                 (dados) => {
-                livro.id = dados.id;
-                this.livros.push(livro);
-                this.listaLivroAtualizada.next([...this.livros]);
+                // livro.id = dados.id;
+                    const livro: Livro = {
+                        id: dados.livro.id,
+                        titulo: titulo,
+                        autor: autor,
+                        paginas: paginas,
+                        imagemURL: dados.livro.imagemURL
+                    }
         })
     }
 
@@ -69,12 +81,12 @@ export class LivroService {
     getCliente(idLivro: string) {
         // return {...this.livros.find((li) => li.id === idLivro)};
         return this.httpClient.get<{
-            _id: string, titulo: string, autor: string, paginas: number
+            _id: string, titulo: string, autor: string, paginas: string
         }>(`http://localhost:3000/api/livros/${idLivro}`);
     }
 
-    atualizarCliente(id: string, titulo: string, autor: string, paginas: number){
-        const livro: Livro = { id, titulo, autor, paginas};
+    atualizarCliente(id: string, titulo: string, autor: string, paginas: string){
+        const livro: Livro = { id, titulo, autor, paginas, imagemURL:null};
         this.httpClient.put(`http://localhost:3000/api/livros/${id}`, livro)
         .subscribe(((res => {
             const copia = [...this.livros];

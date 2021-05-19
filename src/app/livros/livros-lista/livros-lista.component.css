@@ -2,3 +2,13 @@
     margin-top: 1rem;
     display: block;
 }
+
+.cliente-imagem {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.cliente-imagem>img {
+    max-width: 50%;
+}

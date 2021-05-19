@@ -1,6 +1,9 @@
 <mat-accordion *ngIf="livros.length > 0">
     <mat-expansion-panel *ngFor="let livro of livros">
         <mat-expansion-panel-header>{{livro.titulo}}</mat-expansion-panel-header>
+        <div class="livro-imagem">
+            <img [src]="livro.imagemURL" [alt]="livro.nome">
+        </div>
         <p>Identificação: {{livro.id}}</p>
         <p>Autor: {{livro.autor}}</p>
         <p>Paginas: {{livro.paginas}}</p>

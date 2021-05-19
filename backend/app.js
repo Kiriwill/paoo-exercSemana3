@@ -1,16 +1,43 @@
+const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const env = require('./env');
+const multer = require("multer");
 
 const app = express();
 app.use(bodyParser.json());
 const Livro = require('./models/livro');
+const MIME_TYPE_EXTENSAO_MAPA = {
+    'image/png': 'png',
+    'image/jpeg': 'jpg',
+    'image/jpg': 'jpg',
+    'image/bmp': 'bmp'
+}
+const armazenamento = multer.diskStorage({
+    //requisição, arquivo extraido e uma função a ser
+    //executada, capaz de indicar um erro ou devolver
+    //o diretório em que as fotos ficarão
+    destination: (req, file, callback) => {
+        callback(null, "backend/imagens")
+        let e = MIME_TYPE_EXTENSAO_MAPA[file.mimetype] ? null : new Error('Mime Type Invalido');
+        callback(e, "backend/imagens")
+    },
+    filename: (req, file, callback) => {
+        const nome = file.originalname.toLowerCase().split(" ").join("-");
+        const extensao = MIME_TYPE_EXTENSAO_MAPA[file.mimetype];
+        callback(null, `${nome}-${Date.now()}.${extensao}`);
+    }
+})
+
 
 const dbName = "db_livros"
 mongoose.connect(`mongodb+srv://fatec_ipi_2021_paoo_clientes:${env.mongoPassword}@cluster0.naukr.mongodb.net/${dbName}?retryWrites=true&w=majority`, { useNewUrlParser: true })
     .then(() => console.log('Conexão deu certo.'))
     .catch((e) => console.log(e, 'Conexão NÃO FOI BEM.'))
+
+app.use('/imagens', express.static(path.join("backend/imagens")));
+
 
 const livros = [{
         id: '1',
@@ -34,17 +61,26 @@ app.use((req, res, next) => {
     next();
 });
 
-app.post('/api/livros', (req, res, next) => {
+app.post('/api/livros', multer({ storage: armazenamento }).single('imagem'), (req, res, next) => {
+    const imagemURL = `${req.protocol}://${req.get('host')}`
     const livro = new Livro({
         titulo: req.body.titulo,
         autor: req.body.autor,
-        paginas: req.body.paginas
+        paginas: req.body.paginas,
+        imagemURL: `${imagemURL}/imagens/${req.file.filename}`
     })
     livro.save().
     then(livroInserido => {
         res.status(201).json({
             mensagem: 'Livro inserido',
-            id: livroInserido._id
+            // id: livroInserido._id,
+            livro: {
+                id: livroInserido._id,
+                titulo: livroInserido.titulo,
+                autor: livroInserido.autor,
+                paginas: livroInserido.paginas,
+                imagemURL: livroInserido.imagemURL
+            }
         })
     })
 });

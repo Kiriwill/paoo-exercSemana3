@@ -81,16 +81,42 @@ export class LivroService {
     getCliente(idLivro: string) {
         // return {...this.livros.find((li) => li.id === idLivro)};
         return this.httpClient.get<{
-            _id: string, titulo: string, autor: string, paginas: string
+            _id: string, titulo: string, autor: string, paginas: string, imagemURL: string
         }>(`http://localhost:3000/api/livros/${idLivro}`);
     }
 
-    atualizarCliente(id: string, titulo: string, autor: string, paginas: string){
-        const livro: Livro = { id, titulo, autor, paginas, imagemURL:null};
-        this.httpClient.put(`http://localhost:3000/api/livros/${id}`, livro)
+    atualizarLivro(id: string, titulo: string, autor: string, paginas: string, imagem: File|string){
+        // const livro: Livro = { id, titulo, autor, paginas, imagemURL:null};
+        let livroData: Livro | FormData ;
+        if (typeof(imagem) === 'object'){   //é um arquivo, montar um form data
+            livroData = new FormData();
+            livroData.append("id", id);
+            livroData.append('titulo', titulo);
+            livroData.append('autor', autor);
+            livroData.append("paginas", paginas);
+            livroData.append('imagem', imagem, titulo);//chave, foto e nome para o arquivo
+        } else {
+            //enviar JSON comum
+            livroData = {
+                id: id,
+                titulo: titulo,
+                autor: autor,
+                paginas: paginas,
+                imagemURL: imagem
+            }
+        }
+        console.log (typeof(livroData));
+        this.httpClient.put(`http://localhost:3000/api/livros/${id}`, livroData)
         .subscribe(((res => {
             const copia = [...this.livros];
-            const indice = copia.findIndex(cli => cli.id === livro.id);
+            const indice = copia.findIndex(cli => cli.id === id);
+            const livro: Livro = {
+                id: id,
+                titulo: titulo,
+                autor: autor,
+                paginas: paginas,
+                imagemURL: ""
+            }
             copia[indice] = livro;
             this.livros = copia;
             this.listaLivroAtualizada.next([...this.livros]);

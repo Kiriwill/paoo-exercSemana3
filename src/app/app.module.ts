@@ -8,6 +8,7 @@ import { MatCardModule } from "@angular/material/card";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatButtonModule } from "@angular/material/button";
 import { MatExpansionModule } from "@angular/material/expansion";
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 import { AppComponent } from './app.component';
 import { LivrosComponent } from './livros/livros-inserir/livros.component';
@@ -33,7 +34,8 @@ import { CabecalhoComponent } from './cabecalho/cabecalho.component';
     MatToolbarModule,
     MatButtonModule,
     MatExpansionModule,
-    HttpClientModule
+    HttpClientModule,
+    MatPaginatorModule
   ],
   providers: [],
   //  providers: [LivroService], -> substitui @Injectable(...)

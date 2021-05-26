@@ -12,6 +12,9 @@ export class LivrosListaComponent implements OnInit, OnDestroy{
 
   livros: Livro[] = []
   private livroSubscription: Subscription;
+  totalDeLivros: number = 10;
+  totalDeLivrosPorPagina: number = 2;
+  opcoesTotalDeLivrosPorPagina = [2, 5, 10];
 
   // atalho para criar uma variavel de instancia private e a instanciar
   constructor(private livroService: LivroService) {

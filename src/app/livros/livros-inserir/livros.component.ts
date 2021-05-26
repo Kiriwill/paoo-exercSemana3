@@ -45,12 +45,13 @@ export class LivrosComponent implements OnInit{
               autor: dadosLi.autor,
               titulo: dadosLi.titulo,
               paginas: dadosLi.paginas,
-              imagemURL: null
+              imagemURL: dadosLi.imagemURL
             },
             this.form.setValue({
               autor: this.livro.autor,
               titulo: this.livro.titulo,
-              paginas: this.livro.paginas
+              paginas: this.livro.paginas,
+              imagem: this.livro.imagemURL
             })
           }
         )
@@ -78,11 +79,12 @@ export class LivrosComponent implements OnInit{
       
     }
     else{
-      this.livroService.atualizarCliente(
+      this.livroService.atualizarLivro(
         this.idLivro,
         this.form.value.titulo,
         this.form.value.autor,
-        this.form.value.paginas
+        this.form.value.paginas,
+        this.form.value.imagem
       )
     }
     this.form.reset();

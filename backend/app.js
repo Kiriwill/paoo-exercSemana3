@@ -8,6 +8,7 @@ const multer = require("multer");
 const app = express();
 app.use(bodyParser.json());
 const Livro = require('./models/livro');
+const { Router } = require('express');
 const MIME_TYPE_EXTENSAO_MAPA = {
     'image/png': 'png',
     'image/jpeg': 'jpg',
@@ -85,19 +86,29 @@ app.post('/api/livros', multer({ storage: armazenamento }).single('imagem'), (re
     })
 });
 
-app.put("/api/livros/:id", (req, res, next) => {
-    const livro = new Livro({
-        _id: req.params.id,
-        titulo: req.body.titulo,
-        autor: req.body.autor,
-        paginas: req.body.paginas
-    })
-    Livro.updateOne({ _id: req.params.id }, livro)
-        .then((resultado) => {
-            console.log(resultado)
+app.put(
+    "/:id",
+    multer({ storage: armazenamento }).single('imagem'),
+    (req, res, next) => {
+        console.log(req.file)
+        let imagemURL = req.body.imagemURL; //tentamos pegar a URL já existente  
+        if (req.file) { //mas se for um arquivo, montamos uma nova    
+            const url = req.protocol + "://" + req.get("host");
+            imagemURL = url + "/imagens/" + req.file.filename;
+        }
+        const livro = new Livro({
+            _id: req.params.id,
+            titulo: req.body.titulo,
+            autor: req.body.autor,
+            paginas: req.body.paginas,
+            imagemURL: imagemURL
         })
-    res.status(200).json({ mensagem: 'Atualização realizada com sucesso' })
-})
+        Livro.updateOne({ _id: req.params.id }, livro)
+            .then((resultado) => {
+                // console.log(resultado)
+                res.status(200).json({ mensagem: 'Atualização realizada com sucesso' })
+            })
+    })
 
 app.get('/api/livros', (req, res, next) => {
     Livro.find().then(documents => {
